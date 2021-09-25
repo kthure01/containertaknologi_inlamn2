@@ -1,0 +1,47 @@
+# Talar om vilken version av compose filformat man vill använda
+version: '3.9'
+
+# Här samlar vi de resurser vi vill använda oss av.
+# I detta fall är det en MySQL databas. Vi hade även kunnat
+# definera en Ubuntu-maskin. Då har vi startat en container med
+# MySQL-databasen och en med en Ubuntu.maskin på samma gång.
+services:
+
+# Detta är definitionen av MySQL-databasen
+  my_db:
+
+# Detta är den Docker image jag vill utgå ifrån.
+    image: mysql
+
+# Detta kommer min container heta när jag startar den
+    container_name: my_db
+
+# Detta är en policy som läggs på containern. Startar alltid om vi onormal nedstängning, type krash.
+    restart: always
+
+# Här kan man definera miljövariabler att använda i containern
+    environment:
+      MYSQL_ROOT_PASSWORD: passw
+      MYSQL_DATABASE: my_db
+
+# Här mappar jag containerns port till den jag port jag vill använda från
+# min dator för att prata med containern.
+    ports:
+      - "3306:3306"
+
+# Här talar jag om att jag vill använda en "named" volym på min dator.
+# Denna volym mappas till "/sql_vol2" i min container.
+# Att använda volymer gör det möjligt att spara data utanför min container.
+# I detta fall använder jag mig av en namngiven volym som defineras nedan.
+    volumes:
+      - sql_vol1:/sql_vol2
+
+# Här definerar jag volymer som finns tillgängliga att använda i mina "services"
+volumes:
+  sql_vol1:
+
+
+# docker-compose up
+# docker exec -it my_db bash
+# Ctrl+C
+# docker-compose stop

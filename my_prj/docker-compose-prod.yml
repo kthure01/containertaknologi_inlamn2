@@ -1,0 +1,31 @@
+version: "3.9"
+services:
+  app:
+    container_name: my_app_prod
+    build:
+      context: ./app
+      dockerfile: Dockerfile.prod
+    links:
+      - db
+    ports:
+      - "5000:5000"
+    networks:
+      my_net_prod:
+
+  db:
+    container_name: my_db_prod
+    image: mysql
+    ports:
+      - "32000:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: passw
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d/:ro
+    networks:
+      my_net_prod:
+
+networks:
+  my_net_prod:
+
+# docker-compose -f docker-compose-prod.yml up
+# docker-compose -f docker-compose-prod.yml stop
