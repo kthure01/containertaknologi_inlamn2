@@ -1,4 +1,4 @@
-FROM python:alpine3.9
+FROM python:3.9-alpine3.13
 
 LABEL vendor="Devops by Kent" \
     com.devops.kent.authors="kent.ho.thureson@gmail.com" \
