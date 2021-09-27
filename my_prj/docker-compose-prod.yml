@@ -1,20 +1,23 @@
 version: "3.9"
 services:
   app:
+    image: my_prj_app:prod
+    # Använder prod i containernamnet för att markera skillnaden på dev.
     container_name: my_app_prod
     build:
       context: ./app
-      dockerfile: Dockerfile.prod
+      dockerfile: ../Dockerfile.prod
     links:
       - db
     ports:
+      # Använder Flask default port i prod-varianten av imagen.
       - "5000:5000"
     networks:
       my_net_prod:
 
   db:
-    container_name: my_db_prod
     image: mysql
+    container_name: my_db_prod
     ports:
       - "32000:3306"
     environment:
@@ -24,6 +27,7 @@ services:
     networks:
       my_net_prod:
 
+# Skapar ett gemensamt lokalt där tjänstena kan kommunicera.
 networks:
   my_net_prod:
 

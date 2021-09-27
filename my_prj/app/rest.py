@@ -1,11 +1,35 @@
 import pymysql
 import pymysql.cursors
-from flask import jsonify
+from flask import render_template, request, jsonify
 from app import app
 from db import mysql
 
+
 @app.route('/')
-def users():
+def index():
+    return render_template('index.html')
+
+
+@app.route('/login', methods=['POST', 'GET'])
+def login():
+    if request.method == 'GET':
+        return "Not valid"
+
+    conn = mysql.connect()
+
+    if request.method == 'POST':
+        name = request.form['name']
+        age = request.form['age']
+        cursor = conn.cursor()
+        cursor.execute(
+            f"INSERT INTO user(name, age) VALUES(%s, %s)", (name, age))
+        conn.commit()
+        cursor.close()
+        return f"Done!!"
+
+
+@app.route('/show_db', methods=['POST', 'GET'])
+def show_db():
     conn = mysql.connect()
 
     cursor = conn.cursor(pymysql.cursors.DictCursor)
@@ -18,9 +42,6 @@ def users():
 
     return resp
 
-@app.route('/kt', methods=['GET'])
-def kent():
-    return '<h1>HEJ KENT!</h1>'
 
 if __name__ == "__main__":
-    app.run(debug=True,host='0.0.0.0')
+    app.run(host='0.0.0.0')

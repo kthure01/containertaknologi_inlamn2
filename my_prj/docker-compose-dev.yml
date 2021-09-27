@@ -1,31 +1,42 @@
 version: "3.9"
 services:
   app:
+    image: my_prj_app:dev
+    # Använder ett containernamn med dev för att se skillnad på prod och dev.
     container_name: my_app_dev
     build:
       context: ./app
-      dockerfile: Dockerfile.dev
+      # Pekar på Dockerfile för dev
+      dockerfile: ../Dockerfile.dev
     links:
       - db
     ports:
+      # Använder port 5001 för att accessa dev containern.
+      # Kan köra både dev och prod samtidigt.
       - "5001:5000"
+    # Använder volumes i dev för att kunna ändra under drift utan att bygga om.
+    # Detta finns inte i prod!
+    volumes:
+      - ./app:/app
     networks:
       my_net_dev:
 
   db:
-    container_name: my_db_dev
     image: mysql
+    # DB-tjänsten får också ett namn med dev för att skilja på prod och dev.
+    container_name: my_db_dev
     ports:
+      # Använder port 33000 på tjänsten för att undvika en port-krock om prod också är igång..
       - "33000:3306"
     environment:
       MYSQL_ROOT_PASSWORD: passw
     volumes:
+      # Använder volumes för att få "persistent data" mellan körningarna av containern.
       - ./db:/docker-entrypoint-initdb.d/:ro
     networks:
       my_net_dev:
 
 networks:
   my_net_dev:
-
 # docker-compose -f docker-compose-dev.yml up
-# docker-compose -f docker-compose-dev.yml stop
+# docker-compose -f docker-compose-dev.yml stop (För att få till "persistent data")
